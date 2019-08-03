@@ -4,10 +4,22 @@ import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
-public class Main {
-    private static Bot bot;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
-    public static void main(String[] args) {
+public class Main {
+    private static Properties properties;
+    private static Bot bot;
+    private static final String CONF_FILE = ".config/telegramBot/telegramBot.conf";
+
+    public Main() throws IOException {
+        properties = new Properties();
+        properties.load(new FileInputStream(System.getProperty("user.home") + "/" + CONF_FILE));
+    }
+
+    public static void main(String[] args) throws IOException {
+        new Main();
         ApiContextInitializer.init();
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
         try {
@@ -20,5 +32,9 @@ public class Main {
 
     public static Bot getBot() {
         return bot;
+    }
+
+    public static Properties getProperties() {
+        return properties;
     }
 }

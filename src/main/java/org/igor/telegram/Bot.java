@@ -10,9 +10,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Bot extends TelegramLongPollingBot {
-    private static final String BOT_USERNAME = "Scrooge";
-    private static final String BOT_TOKEN = "913380434:AAFDoIO8-WI8Xmxhpgc4WUm3vGZpZ7R87jg";
+    private final String BOT_USERNAME;
+    private final String BOT_TOKEN;
     private Dialog activeDialog;
+
+    public Bot() {
+        BOT_USERNAME = Main.getProperties().getProperty("BOT_USERNAME");
+        BOT_TOKEN = Main.getProperties().getProperty("BOT_TOKEN");
+    }
 
     public void onUpdateReceived(Update update) {
         String message = update.getMessage().getText();
