@@ -12,10 +12,14 @@ import java.io.InputStreamReader;
 public class Bot extends TelegramLongPollingBot {
     private String botUsername = "Scrooge";
     private String botToken = "913380434:AAFDoIO8-WI8Xmxhpgc4WUm3vGZpZ7R87jg";
+    private Dialog activeDialog;
 
     public void onUpdateReceived(Update update) {
         String message = update.getMessage().getText();
         String answer = null;
+
+        if (activeDialog!=null)
+            answer = activeDialog.handleDialog(message);
 
         if (message.startsWith("/uname"))
             answer = handleUname(message.substring(message.indexOf("/uname") + 6).trim());
@@ -56,5 +60,9 @@ public class Bot extends TelegramLongPollingBot {
 
     public String getBotToken() {
         return botToken;
+    }
+
+    public void setActiveDialog(Dialog activeDialog) {
+        this.activeDialog = activeDialog;
     }
 }
