@@ -10,19 +10,22 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Bot extends TelegramLongPollingBot {
-    private String botUsername = "Scrooge";
-    private String botToken = "913380434:AAFDoIO8-WI8Xmxhpgc4WUm3vGZpZ7R87jg";
+    private static final String BOT_USERNAME = "Scrooge";
+    private static final String BOT_TOKEN = "913380434:AAFDoIO8-WI8Xmxhpgc4WUm3vGZpZ7R87jg";
     private Dialog activeDialog;
 
     public void onUpdateReceived(Update update) {
         String message = update.getMessage().getText();
         String answer = null;
 
-        if (activeDialog!=null)
+        if (activeDialog != null)
             answer = activeDialog.handleDialog(message);
 
         if (message.startsWith("/uname"))
             answer = handleUname(message.substring(message.indexOf("/uname") + 6).trim());
+
+        if (message.startsWith("/torrent"))
+            answer = new TorrentDialog().handleDialog(message);
 
         sendMsg(update.getMessage().getChatId(), answer == null ? message : answer);
     }
@@ -50,16 +53,16 @@ public class Bot extends TelegramLongPollingBot {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        answer = answer.replaceAll("#","_").replaceAll("@","-");
+        answer = answer.replaceAll("#", "_").replaceAll("@", "-");
         return answer;
     }
 
     public String getBotUsername() {
-        return botUsername;
+        return BOT_USERNAME;
     }
 
     public String getBotToken() {
-        return botToken;
+        return BOT_TOKEN;
     }
 
     public void setActiveDialog(Dialog activeDialog) {
