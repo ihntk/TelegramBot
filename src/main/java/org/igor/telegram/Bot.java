@@ -20,14 +20,14 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     public void onUpdateReceived(Update update) {
-        String message = update.getMessage().getText();
+        String message = update.getMessage().getText().trim();
         String answer = null;
 
         if (activeDialog != null)
             answer = activeDialog.handleDialog(message);
 
         if (message.startsWith("/uname"))
-            answer = handleUname(message.substring(message.indexOf("/uname") + 6).trim());
+            answer = handleUname(message.substring(message.indexOf("/uname") + 6));
 
         if (message.startsWith("/torrent"))
             answer = new TorrentDialog().handleDialog(message);
@@ -39,6 +39,7 @@ public class Bot extends TelegramLongPollingBot {
         if (message == null || message.equals(""))
             return;
 
+        message = message.replaceAll("_", "-");
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(chatId);
@@ -61,7 +62,6 @@ public class Bot extends TelegramLongPollingBot {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        answer = answer.replaceAll("#", "_").replaceAll("@", "-");
         return answer;
     }
 
