@@ -20,9 +20,11 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     public void onUpdateReceived(Update update) {
+        String answer = null;
+        String message = null;
+
         if (update.hasMessage() && update.getMessage().hasText()) {
-            String message = update.getMessage().getText().trim();
-            String answer = null;
+            message = update.getMessage().getText().trim();
 
             if (activeDialog != null)
                 answer = activeDialog.handleDialog(message);
@@ -33,8 +35,13 @@ public class Bot extends TelegramLongPollingBot {
             if (message.startsWith("/torrent"))
                 answer = new TorrentDialog().handleDialog(message);
 
-            sendMsg(update.getMessage().getChatId(), answer == null ? message : answer);
+
+        } else if (update.hasMessage() && update.getMessage().hasDocument()) {
+            if (activeDialog != null)
+                answer = activeDialog.handleDialog(update.getMessage().getDocument());
         }
+
+        sendMsg(update.getMessage().getChatId(), answer == null ? message : answer);
     }
 
     private synchronized void sendMsg(Long chatId, String message) {

@@ -1,5 +1,7 @@
 package org.igor.telegram;
 
+import org.telegram.telegrambots.meta.api.objects.Document;
+
 public abstract class Dialog {
 
     private String answer;
@@ -21,4 +23,6 @@ public abstract class Dialog {
     }
 
     public abstract String handleDialog(String message);
+
+    public abstract String handleDialog(Document document);
 }

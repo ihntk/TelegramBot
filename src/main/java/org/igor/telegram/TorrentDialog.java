@@ -1,5 +1,7 @@
 package org.igor.telegram;
 
+import org.telegram.telegrambots.meta.api.objects.Document;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -8,7 +10,7 @@ import java.util.Properties;
 
 public class TorrentDialog extends Dialog {
     private Path categoryPath;
-    private String url;
+    private Document document;
     private Properties properties;
 
     private final String films;
@@ -35,9 +37,6 @@ public class TorrentDialog extends Dialog {
         List<String> messageCommands = Arrays.asList(message.split(" "));
 
         for (String command : messageCommands) {
-            if (command.startsWith("http"))
-                url = command;
-
             switch (command) {
                 case ("/films"):
                     categoryPath = Paths.get(films);
@@ -60,17 +59,25 @@ public class TorrentDialog extends Dialog {
             }
         }
 
+        String fileName = document.getFileName();
+        boolean isTorrent = fileName.endsWith(".torrent");
 
-        if (categoryPath != null && url != null) {
+        if (categoryPath != null && isTorrent) {
             downloadTorrent();
             exitDialog();
             setAnswer("Torrent is downloading");
         } else if (categoryPath == null)
             setAnswer("Select category");
-        else if (url == null)
-            setAnswer("Input torrent link");
+        else
+            setAnswer("Input torrent file");
 
         return getAnswer();
+    }
+
+    @Override
+    public String handleDialog(Document document) {
+        this.document = document;
+        return handleDialog("");
     }
 
     private void downloadTorrent() {
