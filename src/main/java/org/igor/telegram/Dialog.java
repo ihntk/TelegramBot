@@ -16,5 +16,9 @@ public abstract class Dialog {
         Main.getBot().setActiveDialog(this);
     }
 
+    public void exitDialog() {
+        Main.getBot().setActiveDialog(null);
+    }
+
     public abstract String handleDialog(String message);
 }
