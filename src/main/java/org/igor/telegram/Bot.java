@@ -20,19 +20,21 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     public void onUpdateReceived(Update update) {
-        String message = update.getMessage().getText().trim();
-        String answer = null;
+        if (update.hasMessage() && update.getMessage().hasText()) {
+            String message = update.getMessage().getText().trim();
+            String answer = null;
 
-        if (activeDialog != null)
-            answer = activeDialog.handleDialog(message);
+            if (activeDialog != null)
+                answer = activeDialog.handleDialog(message);
 
-        if (message.startsWith("/uname"))
-            answer = handleUname(message.substring(message.indexOf("/uname") + 6));
+            if (message.startsWith("/uname"))
+                answer = handleUname(message.substring(message.indexOf("/uname") + 6));
 
-        if (message.startsWith("/torrent"))
-            answer = new TorrentDialog().handleDialog(message);
+            if (message.startsWith("/torrent"))
+                answer = new TorrentDialog().handleDialog(message);
 
-        sendMsg(update.getMessage().getChatId(), answer == null ? message : answer);
+            sendMsg(update.getMessage().getChatId(), answer == null ? message : answer);
+        }
     }
 
     private synchronized void sendMsg(Long chatId, String message) {
