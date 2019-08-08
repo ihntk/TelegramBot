@@ -77,6 +77,7 @@ public class TorrentDialog extends Dialog {
     @Override
     public String handleDialog(Document document) {
         this.document = document;
+        resetDocument();
         return handleDialog("");
     }
 

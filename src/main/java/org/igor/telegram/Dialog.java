@@ -22,6 +22,10 @@ public abstract class Dialog {
         Main.getBot().setActiveDialog(null);
     }
 
+    public void resetDocument() {
+        Main.getBot().setDocument(null);
+    }
+
     public abstract String handleDialog(String message);
 
     public abstract String handleDialog(Document document);

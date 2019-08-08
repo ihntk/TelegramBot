@@ -2,6 +2,7 @@ package org.igor.telegram;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -13,6 +14,7 @@ public class Bot extends TelegramLongPollingBot {
     private final String BOT_USERNAME;
     private final String BOT_TOKEN;
     private Dialog activeDialog;
+    private Document document;
 
     public Bot() {
         BOT_USERNAME = Main.getProperties().getProperty("BOT_USERNAME");
@@ -33,12 +35,21 @@ public class Bot extends TelegramLongPollingBot {
                 answer = handleUname(message.substring(message.indexOf("/uname") + 6));
 
             if (message.startsWith("/torrent"))
-                answer = new TorrentDialog().handleDialog(message);
+                if (document != null)
+                    answer = new TorrentDialog().handleDialog(document);
+                else
+                    answer = new TorrentDialog().handleDialog(message);
 
 
         } else if (update.hasMessage() && update.getMessage().hasDocument()) {
+            document = update.getMessage().getDocument();
             if (activeDialog != null)
-                answer = activeDialog.handleDialog(update.getMessage().getDocument());
+                answer = activeDialog.handleDialog(document);
+            else {
+                if (document.getFileName().endsWith(".torrent")) {
+                    answer = "Looks like received file is /torrent";
+                }
+            }
         }
 
         sendMsg(update.getMessage().getChatId(), answer == null ? message : answer);
@@ -84,5 +95,9 @@ public class Bot extends TelegramLongPollingBot {
 
     public void setActiveDialog(Dialog activeDialog) {
         this.activeDialog = activeDialog;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
     }
 }
